@@ -40,7 +40,7 @@ namespace NZWalks.API.Controllers
         }
 
         // GET ALL WALKS
-        //POST: /api/walks
+        //GET: /api/walks
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -50,6 +50,26 @@ namespace NZWalks.API.Controllers
             var walksDto = mapper.Map<List<WalkDto>>(walksDomainModel);
 
             return Ok(walksDto);
+        }
+
+        // GET SINGLE WALK by id
+        //GET: /api/walks/{id}
+        [HttpGet]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        {
+
+            var walkDomainModel = await walkRepository.GetByIdAsync(id);
+
+            if (walkDomainModel == null)
+            {
+                return NotFound();
+            }
+
+            // Map/convert walk domain model to walk dto   
+            var walkDto = mapper.Map<WalkDto>(walkDomainModel);
+
+            return Ok(walkDto);
         }
     }
 }

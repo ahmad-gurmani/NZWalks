@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using NZWalks.API.Data;
 using NZWalks.API.Models.Domain;
 
@@ -29,5 +28,9 @@ namespace NZWalks.API.Repositories
 
         }
 
+        public async Task<Walk?> GetByIdAsync(Guid id)
+        {
+            return await dbContext.Walks.Include("Difficulty").Include("Region").FirstOrDefaultAsync(x => x.Id == id);
+        }
     }
 }
