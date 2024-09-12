@@ -1,13 +1,13 @@
-﻿using NZWalks.API.Models.Domain;
-
-namespace NZWalks.API.Models.DTO
+﻿namespace NZWalks.API.Models.DTO
 {
-    public class AddWalkRequestDto
+    public class UpdateWalkRequestDto
     {
         public string Name { get; set; }
         public string Description { get; set; }
         public double LengthInKm { get; set; }
         public string? WalkImageUrl { get; set; }
+
+        // Foreign Keys
         public Guid DifficultyId { get; set; }
         public Guid RegionId { get; set; }
     }

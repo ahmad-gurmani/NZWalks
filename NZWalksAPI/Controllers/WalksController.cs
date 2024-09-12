@@ -24,8 +24,9 @@ namespace NZWalks.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AddWalkRequestDto addWalkRequestDto)
         {
-            if (addWalkRequestDto == null) { 
-            return NotFound();
+            if (addWalkRequestDto == null)
+            {
+                return NotFound();
             }
 
             //Map AddWalkRequestDto to Walk domain model
@@ -34,7 +35,7 @@ namespace NZWalks.API.Controllers
             await walkRepository.CreateAsync(walkDomainModel);
 
             //map domain model to Dto
-           var walkData = mapper.Map<WalkDto>(walkDomainModel);
+            var walkData = mapper.Map<WalkDto>(walkDomainModel);
 
             return Ok(walkData);
         }
@@ -71,5 +72,27 @@ namespace NZWalks.API.Controllers
 
             return Ok(walkDto);
         }
+
+        //PUT: Update walk by id
+        //PUT: https://localhost:portnumber/api/Walks/{id}
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> Update([FromRoute] Guid id, UpdateWalkRequestDto updateWalkRequestDto)
+        {
+            //Map Dto to domain Model
+            var walkDomainModel = mapper.Map<Walk>(updateWalkRequestDto);
+
+            walkDomainModel = await walkRepository.UpdateAsync(id, walkDomainModel);
+
+            if (walkDomainModel == null)
+            {
+                return NotFound();
+            }
+
+           var walkDto = mapper.Map<WalkDto>(walkDomainModel);
+
+            return Ok(walkDto);
+        }
+
     }
 }
