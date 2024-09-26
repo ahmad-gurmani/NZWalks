@@ -20,9 +20,21 @@ namespace NZWalks.API.Repositories
             return walk;
         }
 
-        public async Task<List<Walk>> GetAllAsync()
+        public async Task<List<Walk>> GetAllAsync(string? filterOn = null, string? filterQuery = null)
         {
-            return await dbContext.Walks.Include("Difficulty").Include("Region").ToListAsync();
+            var walks = dbContext.Walks.Include("Difficulty").Include("Region").AsQueryable();
+
+            // Filtering 
+            if (string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
+            {
+                if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = walks.Where(x => x.Name.Contains(filterQuery));
+                }
+            }
+
+            return await walks.ToListAsync();
+            //return await dbContext.Walks.Include("Difficulty").Include("Region").ToListAsync();
             //or
             //return await dbContext.Walks.Include(x => x.Difficulty).Include(x => x.Region).ToListAsync();
 
@@ -49,7 +61,7 @@ namespace NZWalks.API.Repositories
             existingWalk.WalkImageUrl = walk.WalkImageUrl;
             existingWalk.DifficultyId = walk.DifficultyId;
             existingWalk.RegionId = walk.RegionId;
-            
+
             await dbContext.SaveChangesAsync();
 
             return existingWalk;
@@ -58,9 +70,9 @@ namespace NZWalks.API.Repositories
 
         public async Task<Walk?> DeleteAsync(Guid id)
         {
-           var existingWalkDomainModel = await dbContext.Walks.FirstOrDefaultAsync(x=> x.Id == id);
+            var existingWalkDomainModel = await dbContext.Walks.FirstOrDefaultAsync(x => x.Id == id);
 
-            if(existingWalkDomainModel == null) 
+            if (existingWalkDomainModel == null)
             {
                 return null;
             }
